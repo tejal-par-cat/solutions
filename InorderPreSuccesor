@@ -1,0 +1,117 @@
+//Inorder Predecessor and successor
+
+class Node {
+ 
+    int key;
+    Node left, right;
+    
+    Node() {
+       left = right = null; 
+    }
+ 
+    Node(int d) {
+        key = d;
+        left = right = null;
+    }
+}
+
+class Result {
+    Node pre;
+    Node succ;
+}
+
+class BinarySerachTree {
+    
+    static Node root;
+    
+    Node insert(Node node, int data) {
+         
+        /* 1. If the tree is empty, return a new,     
+         single node */
+        if (node == null) {
+            return (new Node(data));
+        } else {
+             
+            /* 2. Otherwise, recur down the tree */
+            if (data <= node.key) {
+                node.left = insert(node.left, data);
+            } else {
+                node.right = insert(node.right, data);
+            }
+ 
+            /* return the (unchanged) node pointer */
+            return node;
+        }
+    }
+    
+    Result findPreSuc(Node root, Result result, int key) {
+        
+        if(root == null) {
+            return result;
+        }
+        
+        if(root.key == key) {
+            //if left subtree != null then pre = rightmost child of left subtree
+            if(root.left != null) {
+                
+                Node temp = root.left;
+                while(temp.right != null) {
+                    temp = temp.right;
+                }
+                
+                result.pre = temp;
+            }
+            
+            
+            //if right subtree != null then succ = leftmost child in right subtree
+            if(root.right != null) {
+                
+                Node temp = root.right;
+                while(temp.left != null) {
+                    temp = temp.left;
+                }
+                
+                result.succ = temp;
+            }
+        }
+        
+        
+        if(root.key > key) {
+            result.succ = root;
+            result = findPreSuc(root.left, result, key);
+        }
+        else {
+            result.pre = root;
+            result = findPreSuc(root.right, result, key);
+        }
+        
+        return result;
+    }
+    
+    
+     public static void main(String[] args) {
+        BinarySerachTree tree = new BinarySerachTree();
+        Node root = null;
+        root = tree.insert(root, 50);
+        tree.insert(root, 30);
+        tree.insert(root, 20);
+        tree.insert(root, 40);
+        tree.insert(root, 70);
+        tree.insert(root, 60);
+        tree.insert(root, 80);
+ 
+        Node pre = new Node();
+        Node succ = new Node();
+        Result result = new Result();
+        result = tree.findPreSuc(root, result, 65);
+        
+        if(result.pre != null) {
+            System.out.println("Pre: " + result.pre.key);
+        }
+        if(result.succ != null) {
+            System.out.println("Succ: " + result.succ.key);
+        }
+    }
+}
+
+//Expected Answer is Pre: 60 Succ: 70
